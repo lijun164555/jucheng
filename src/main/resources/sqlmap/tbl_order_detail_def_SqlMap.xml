@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="GB2312" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+ 
+
+<sqlMap namespace="jucheng_order_detail">
+    <resultMap id="orderdetail" class="com.jucheng.ec.app.model.OrderDetail">
+        <result property="id" column="id" javaType="int"/>
+        <result property="orderId" column="order_id" javaType="int"/>
+        <result property="menuId" column="menu_id" javaType="int"/>
+        <result property="amount" column="amount"  javaType="int"/>
+        <result property="status" column="status" javaType="int" />
+        <result property="gmtCreate" column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="gmtModify" column="gmt_modify" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+ <insert id="insert" parameterClass="com.jucheng.ec.app.model.OrderDetail">
+
+        <![CDATA[
+
+         insert into order_detail (id,order_id,menu_id,amount,status,gmt_create,gmt_modify) values (#id#,#orderId#,#menuId#,#amount#,#status#,now(),now()) 
+
+    ]]> 
+
+        <selectKey resultClass="int" keyProperty="id" >
+
+            SELECT @@IDENTITY AS id
+
+        </selectKey>
+
+</insert>
+    <select id="queryOrderDetailByOrderId" resultClass="com.jucheng.ec.app.model.OrderDetail" parameterClass="int" resultMap="orderdetail" >
+        <![CDATA[
+            select * from order_detail where  order_id = #orderId# 
+        ]]>
+    </select>
+     <select id="queryOrderDetailByOrderIdAndMenuId" resultClass="com.jucheng.ec.app.model.OrderDetail" parameterClass="java.util.Map" resultMap="orderdetail" >
+        <![CDATA[
+            select * from order_detail where  order_id = #orderId# and menu_id=#menuId#
+        ]]>
+    </select>
+     <update id="update" parameterClass="com.jucheng.ec.app.model.OrderDetail" >
+            update
+                        order_detail
+            set   
+                  amount=#amount#     
+		
+		where ID = #id#			
+    </update>
+</sqlMap>

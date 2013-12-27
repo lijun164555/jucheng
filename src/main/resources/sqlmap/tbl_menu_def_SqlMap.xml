@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="GB2312" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+ 
+
+<sqlMap namespace="jucheng_menu">
+    <resultMap id="menu" class="com.jucheng.ec.app.model.Menu">
+        <result property="id" column="id" javaType="int"/>
+        <result property="name" column="name" javaType="java.lang.String"/>
+        <result property="price" column="price" javaType="int"/>
+        <result property="typeId" column="type_id"  javaType="int"/>
+        <result property="picUrl" column="pic_url" javaType="java.lang.String" />
+        <result property="storeId" column="store_id"  javaType="int"/>
+        <result property="status" column="status"  javaType="int"/>
+        <result property="secondName" column="second_name"  javaType="java.lang.String"/>
+        <result property="thirdName" column="third_name"  javaType="java.lang.String"/>
+        <result property="gmtCreate" column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="gmtModify" column="gmt_modify" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="eatType" column="eat_type"  javaType="int"/>
+    </resultMap>
+
+ <insert id="insert" parameterClass="com.jucheng.ec.app.model.Menu">
+
+        <![CDATA[
+
+         insert into menu (id,name,price,type_id,pic_url,store_id,second_name,third_name,gmt_create,gmt_modify,eat_type) values (#id#,#name#,#price#,#typeId#,#picUrl#,#storeId#,#secondName#,#thirdName#,now(),now(),#eatType#) 
+
+    ]]> 
+
+        <selectKey resultClass="int" keyProperty="id" >
+
+            SELECT @@IDENTITY AS id
+
+        </selectKey>
+
+</insert>
+    <select id="queryMenuByType" resultClass="com.jucheng.ec.app.model.Menu" parameterClass="int" resultMap="menu" >
+        <![CDATA[
+            select * from menu where  type_id = #typeId# 
+        ]]>
+    </select>
+     <select id="queryMenuByStoreId" resultClass="com.jucheng.ec.app.model.Menu"  parameterClass="java.util.Map" resultMap="menu" >
+       
+            select * from menu where  store_id = #storeId#
+             <isNotEqual prepend=" AND " property="eatType" compareValue="-1">
+              (eat_type=#eatType# or eat_type=2) 
+             </isNotEqual>
+              order by gmt_modify desc 
+      
+    </select>
+    
+      <select id="queryMenuById" resultClass="com.jucheng.ec.app.model.Menu" parameterClass="int" resultMap="menu" >
+        <![CDATA[
+            select * from menu where  id = #id# 
+        ]]>
+    </select>
+     <update id="updateMenu" parameterClass="com.jucheng.ec.app.model.Menu" >
+            update
+                        menu
+            set
+                    name=#name#,gmt_modify=now(),price=#price#,pic_url=#picUrl#,type_id=#typeId#,second_name=#secondName#,third_name=#thirdName#,eat_type=#eatType#
+		
+		where ID = #id#			
+    </update>
+     <update id="updateStatus" parameterClass="java.util.Map" >
+            update
+                        menu
+            set
+                    status=#status#,gmt_modify=now()
+		
+		where ID = #id#			
+    </update>
+</sqlMap>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="GB2312" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+ 
+
+<sqlMap namespace="jucheng_operater">
+    <resultMap id="operater" class="com.jucheng.ec.app.model.Operater">
+        <result property="id" column="id" javaType="int"/>
+        <result property="name" column="name" javaType="java.lang.String"/>
+        <result property="storeId" column="store_id"  javaType="int"/>
+         <result property="password" column="password"  javaType="java.lang.String"/>
+        <result property="gmtCreate" column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="gmtModify" column="gmt_modify" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+ <insert id="insert" parameterClass="com.jucheng.ec.app.model.Operater">
+
+        <![CDATA[
+
+         insert into operater (id,name,store_id,password,gmt_create,gmt_modify) values (#id#,#name#,#storeId#,#password#,now(),now()) 
+
+    ]]> 
+
+        <selectKey resultClass="int" keyProperty="id" >
+
+            SELECT @@IDENTITY AS id
+
+        </selectKey>
+
+</insert>
+    <select id="queryByPassword" resultClass="com.jucheng.ec.app.model.Operater" parameterClass="java.util.Map" resultMap="operater" >
+        <![CDATA[
+            select * from operater where  password = #password# and store_id=#storeId#
+        ]]>
+    </select>
+       <select id="queryall" resultClass="com.jucheng.ec.app.model.Operater" parameterClass="int" resultMap="operater" >
+        <![CDATA[
+            select * from operater where store_id=#storeId#
+        ]]>
+    </select>
+        <update id="updateOperater" parameterClass="com.jucheng.ec.app.model.Operater" >
+            update
+                        operater
+            set
+                    name=#name#,gmt_modify=now(),password=#password#
+		
+		where ID = #id#			
+    </update>
+</sqlMap>

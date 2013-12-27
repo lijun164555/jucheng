@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="GB2312" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+ 
+
+<sqlMap namespace="jucheng_order">
+    <resultMap id="order" class="com.jucheng.ec.app.model.Order">
+        <result property="id" column="id" javaType="int"/>
+        <result property="tableNum" column="table_num" javaType="int"/>
+        <result property="payStatus" column="pay_status" javaType="int"/>
+         <result property="storeId" column="store_id" javaType="int"/>
+          <result property="headcount" column="headcount" javaType="int"/>
+           <result property="totalSum" column="total_sum" javaType="int"/>
+            <result property="paidIn" column="paid_in" javaType="int"/>
+             <result property="is_invoice" column="is_invoice" javaType="int"/>
+              <result property="bill_type" column="bill_type" javaType="int"/>
+             <result property="operaterId" column="operater_id" javaType="java.lang.String" />
+        <result property="gmtCreate" column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="gmtModify" column="gmt_modify" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+ <insert id="insert" parameterClass="com.jucheng.ec.app.model.Order">
+
+        <![CDATA[
+         insert into jc_order (id,table_num,pay_status,store_id,headcount,operater_id,total_sum,paid_in,is_invoice,bill_type,gmt_create,gmt_modify) values (#id#,#tableNum#,#payStatus#,#storeId#,#headcount#,#operaterId#,#totalSum#,#paidIn#,#is_invoice#,#bill_type#,now(),now()) 
+    ]]> 
+
+        <selectKey resultClass="int" keyProperty="id" >
+
+            SELECT @@IDENTITY AS id
+
+        </selectKey>
+
+</insert>
+    <select id="queryOrderByTable" resultClass="com.jucheng.ec.app.model.Order" parameterClass="java.util.Map" resultMap="order" >
+        <![CDATA[
+            select * from jc_order where  table_num = #tableNum# and store_id=#storeId# order by id desc limit 1
+        ]]>
+    </select>
+      <select id="queryTodayTotalSum" resultClass="int" parameterClass="int"  >
+        <![CDATA[
+            select SUM(total_sum )from jc_order where  to_days(gmt_create)=to_days(now())
+        ]]>
+    </select>
+    <update id="update_pay_status" parameterClass="java.util.Map" >
+            update
+                        jc_order
+            set
+                    pay_status=1,gmt_modify=now(),total_sum=#totalSum#,paid_in=#paid_in#,is_invoice=#is_invoice#,bill_type=#bill_type#
+		
+		where ID = #id#			
+    </update>
+        <select id="queryAllOrderByTable" resultClass="com.jucheng.ec.app.model.Order" parameterClass="java.util.Map" resultMap="order" >
+        <![CDATA[
+            select * from jc_order where  table_num = #tableNum# and store_id=#storeId# order by id desc 
+        ]]>
+    </select>
+       <select id="queryOrderById" resultClass="com.jucheng.ec.app.model.Order" parameterClass="int" resultMap="order" >
+        <![CDATA[
+            select * from jc_order where  id=#id# 
+        ]]>
+    </select>
+     <select id="queryOrder" resultClass="com.jucheng.ec.app.model.Order" parameterClass="java.util.Map" resultMap="order" >
+        <![CDATA[
+            select * from jc_order where   store_id=#storeId# order by id desc
+        ]]>
+    </select>
+     <update id="update" parameterClass="com.jucheng.ec.app.model.Order" >
+            update
+                        jc_order
+            set
+                    gmt_modify=now(),total_sum=#totalSum#,operater_id=#operaterId#,headcount=#headcount#
+		
+		where ID = #id#			
+    </update>
+     <select id="queryPaidIn" resultClass="java.util.Map" parameterClass="int"  >
+        <![CDATA[
+           select SUM(paid_in ) ts ,  bill_type from jc_order where  to_days(gmt_create)=to_days(now()) GROUP BY  bill_type
+        ]]>
+    </select>
+    <select id="queryPaidInByType" resultClass="java.util.Map" parameterClass="int"  >
+        <![CDATA[
+           select SUM(paid_in ) ts ,  bill_type from jc_order where  to_days(gmt_create)=to_days(now()) GROUP BY  bill_type
+        ]]>
+    </select>
+</sqlMap>

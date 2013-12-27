@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="GB2312" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+ 
+
+<sqlMap namespace="jucheng_menu_type">
+    <resultMap id="menuType" class="com.jucheng.ec.app.model.MenuType">
+        <result property="id" column="id" javaType="int"/>
+        <result property="name" column="name" javaType="java.lang.String"/>
+        <result property="storeId" column="store_id"  javaType="int"/>
+        <result property="stove" column="stove"  javaType="String"/>
+        <result property="gmtCreate" column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="gmtModify" column="gmt_modify" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+ <insert id="insert" parameterClass="com.jucheng.ec.app.model.MenuType">
+
+        <![CDATA[
+         insert into menu_type (id,name,store_id,stove,gmt_create,gmt_modify) values (#id#,#name#,#storeId#,#stove#,now(),now()) 
+    ]]> 
+
+        <selectKey resultClass="int" keyProperty="id" >
+
+            SELECT @@IDENTITY AS id
+
+        </selectKey>
+
+</insert>
+     <select id="queryMenuTypeByStoreId" resultClass="com.jucheng.ec.app.model.MenuType" parameterClass="int" resultMap="menuType" >
+        <![CDATA[
+            select * from menu_type where  store_id = #storeId#  order by gmt_modify desc
+        ]]>
+    </select>
+    <update id="updateMenuType" parameterClass="com.jucheng.ec.app.model.MenuType" >
+            update
+                        menu_type
+            set
+                    name=#name#,gmt_modify=now(),stove=#stove#
+		
+		where ID = #id#			
+    </update>
+         <select id="queryMenuTypeById" resultClass="com.jucheng.ec.app.model.MenuType" parameterClass="int" resultMap="menuType" >
+        <![CDATA[
+            select * from menu_type where  id = #id# 
+        ]]>
+    </select>
+</sqlMap>

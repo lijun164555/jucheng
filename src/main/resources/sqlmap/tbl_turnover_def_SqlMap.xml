@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="GB2312" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+ 
+
+<sqlMap namespace="jucheng_turnover">
+    <resultMap id="turnover" class="com.jucheng.ec.app.model.Turnover">
+        <result property="id" column="id" javaType="int"/>
+        <result property="storeId" column="store_id"  javaType="int"/>
+        <result property="amount" column="amount"  javaType="int"/>
+         <result property="billType" column="bill_type"  javaType="int"/>
+        <result property="gmtCreate" column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="gmtModify" column="gmt_modify" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+ <insert id="insert" parameterClass="com.jucheng.ec.app.model.Turnover">
+
+        <![CDATA[
+         insert into turnover (id,store_id,amount,bill_type,gmt_create,gmt_modify) values (#id#,#storeId#,#amount#,#billType#,now(),now()) 
+    ]]> 
+
+        <selectKey resultClass="int" keyProperty="id" >
+
+            SELECT @@IDENTITY AS id
+
+        </selectKey>
+
+</insert>
+     <select id="queryallByStoreId" resultClass="com.jucheng.ec.app.model.Turnover"  parameterClass="int"  resultMap="turnover" >
+        <![CDATA[
+            select * from turnover  where  store_id=#storeId# order by gmt_modify desc
+        ]]>
+    </select>
+    <select id="queryTurnoverByStoreId" resultClass="com.jucheng.ec.app.model.Turnover"  parameterClass="int" resultMap="turnover" >
+        <![CDATA[
+            select * from turnover   where to_days(gmt_create)=to_days(now()) and store_id=#storeId#
+        ]]>
+    </select>
+    <update id="updateTurnover" parameterClass="com.jucheng.ec.app.model.Turnover" >
+            update
+                        turnover
+            set
+                    amount=#amount#,gmt_modify=now()
+		
+		where ID = #id#			
+    </update>
+</sqlMap>
